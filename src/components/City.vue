@@ -2,17 +2,20 @@
   <div>
     <h2>{{name}}</h2>
     <p>Temps : {{weather}} - Température : {{temperature}}°C</p>
-    <p><em>Dernière mise à jour : {{formattedDate}}</em></p>
+    <p><em>Dernière mise à jour : {{currentDateTime()}}</em></p>
   </div>
 </template>
 
-<script>
-  import {format, register} from 'timeago.js';
+<script lang="ts">
+  import {register} from 'timeago.js';
   import timeAgoFr from  'timeago.js/esm/lang/fr';
+  import {defineComponent} from "vue";
+  import moment from 'moment';
+
 
   register('fr', timeAgoFr);
 
-  export default {
+  export default defineComponent({
     name: 'City',
     props: {
       name: String,
@@ -20,12 +23,13 @@
       temperature: Number,
       updatedAt: Date
     },
-    computed: {
-      formattedDate: function() {
-        return format(this.updatedAt, 'fr');
+    methods: {
+      currentDateTime() {
+        moment.locale("fr");
+        return moment(this.updatedAt).fromNow();
       }
     }
-  }
+  })
 </script>
 
 <style scoped>
