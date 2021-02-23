@@ -4,6 +4,7 @@
       <img src="./assets/logo-cn.png" alt="Logo Campus Numérique">
       <div>
         <router-link to="/villes">Liste</router-link>
+        <router-link to="/carte">Carte</router-link>
       </div>
     </header>
     <router-view></router-view>
@@ -56,14 +57,15 @@ html, body {
   text-decoration: none;
 }
 
-/*#map {*/
-/*  width: 100%;*/
-/*  height: 500px;*/
-/*}*/
+#map {
+  width: 100%;
+  height: 500px;
+}
 
-/*#map .marker {*/
-/*  width: 50px;*/
-/*  height: auto;*/
-/*  cursor: pointer;*/
-/*}*/
+#map .marker {
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+}
 </style>
+

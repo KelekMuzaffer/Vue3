@@ -1,30 +1,55 @@
+
 <template>
-  <div>
-    <h1>Carte des villes</h1>
-    <mapbox
-        :map-options="{
-        style: 'https://maps.hotentic.com/styles/isere/style.json',
-        center: [6.0925617, 45.8910906],
-        zoom: 10,
-      }"
-        @map-load="loaded"
-    />
+  <div style="height: 100vh; width: 100vw;">
+    <l-map
+        v-model="zoom"
+        v-model:zoom="zoom"
+        :center="[45.8910906, 6.0925617]"
+    >
+      <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      ></l-tile-layer>
+
+      <l-marker v-for="city in cities" :lat-lng="[city.lat, city.lon]" :key="city.name">
+        <l-icon :icon-url="`https://openweathermap.org/img/wn/${city.icon}.png`" :icon-size="iconSize"/>
+      </l-marker>
+    </l-map>
   </div>
 </template>
 
 <script>
-  import axios from "axios";
-  import Mapbox from 'mapbox-gl-vue';
+
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LIcon,
+} from "@vue-leaflet/vue-leaflet";
+import "leaflet/dist/leaflet.css";
+import axios from "axios";
 
   export default {
-    name: 'CitiesMap',
-    components: {
-      Mapbox
-    },
     data() {
+      const cities = [];
+      const iconWidth = 50;
+      const iconHeight = 50;
       return {
-        cities: []
+        cities,
+        zoom: 10,
+        iconWidth,
+        iconHeight,
       }
+    },
+    components: {
+      LMap,
+      LTileLayer,
+      LMarker,
+      LIcon,
+    },
+    computed: {
+      iconSize() {
+        return [this.iconWidth, this.iconHeight];
+      },
     },
     methods: {
       loadCities(citiesData) {
@@ -33,31 +58,10 @@
           this.cities.push({name, lat, lon, weather, icon, temperature, updatedAt: new Date(updatedAt * 1000)});
         }
       },
-      loaded(map) {
-        const mapboxgl = require('mapbox-gl/dist/mapbox-gl');
-
-        this.cities.forEach(function(city) {
-          let el = document.createElement('img');
-          el.src = `https://openweathermap.org/img/wn/${city.icon}@2x.png`;
-          el.classList.add('marker');
-          el.title = `${city.name} - ${city.temperature}°C`;
-
-          new mapboxgl.Marker(el)
-            .setLngLat([city.lon, city.lat])
-            .addTo(map);
-        });
-      },
     },
     mounted() {
       axios.get(`https://api.openweathermap.org/data/2.5/find?lat=${process.env.VUE_APP_DEFAULT_LATITUDE}&lon=${process.env.VUE_APP_DEFAULT_LONGITUDE}&cnt=20&cluster=yes&lang=fr&units=metric&APPID=${process.env.VUE_APP_OW_APP_ID}`)
-        .then((resp) => this.loadCities(resp.data.list));
+          .then((resp) => this.loadCities(resp.data.list));
     }
-  }
+  };
 </script>
-
-<style scoped>
-  h1 {
-    margin: 40px 0 0;
-  }
-
-</style>
