@@ -21,7 +21,7 @@
       name: String,
       weather: String,
       temperature: Number,
-      updatedAt: Date
+      updatedAt: [String, Date]
     },
     methods: {
       currentDateTime() {

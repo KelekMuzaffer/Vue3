@@ -11,8 +11,8 @@
 
 <script>
   import axios from 'axios';
-
-  export default {
+  import { defineComponent } from 'vue';
+  export default defineComponent({
     name: 'EasterEgg',
     data() {
       return {
@@ -35,5 +35,5 @@
     created() {
       this.refreshQuote();
     }
-  }
+  })
 </script>

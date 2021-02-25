@@ -26,9 +26,10 @@ import {
   LIcon,
 } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
-import axios from "axios";
+import { defineComponent} from "vue";
+import {useStore} from "@/store";
 
-  export default {
+  export default defineComponent ({
     data() {
       const cities = [];
       const iconWidth = 50;
@@ -51,17 +52,9 @@ import axios from "axios";
         return [this.iconWidth, this.iconHeight];
       },
     },
-    methods: {
-      loadCities(citiesData) {
-        this.cities = [];
-        for (const {name, coord: {lat, lon}, weather: [{description: weather, icon: icon}], main: {temp: temperature}, dt: updatedAt} of citiesData) {
-          this.cities.push({name, lat, lon, weather, icon, temperature, updatedAt: new Date(updatedAt * 1000)});
-        }
-      },
+    setup() {
+      const store = useStore();
+      return {loadedData: store.state.city};
     },
-    mounted() {
-      axios.get(`https://api.openweathermap.org/data/2.5/find?lat=${process.env.VUE_APP_DEFAULT_LATITUDE}&lon=${process.env.VUE_APP_DEFAULT_LONGITUDE}&cnt=20&cluster=yes&lang=fr&units=metric&APPID=${process.env.VUE_APP_OW_APP_ID}`)
-          .then((resp) => this.loadCities(resp.data.list));
-    }
-  };
+  });
 </script>

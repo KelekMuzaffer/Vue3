@@ -12,15 +12,23 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import CitiesList from './components/CitiesList.vue';
+import { defineComponent, onMounted } from 'vue';
+import { useStore } from './store';
 
-@Options({
-  components: {
-    CitiesList
+export default defineComponent({
+  name: 'App',
+  setup(){
+    const store = useStore();
+    store.commit('initialiseStore');
+    onMounted(() => {
+      store.subscribe((mutation, state) => {
+        localStorage.setItem('store', JSON.stringify(state));
+      });
+      store.dispatch('weather');
+    })
+
   },
-})
-export default class App extends Vue {}
+});
 </script>
 
 <style>
