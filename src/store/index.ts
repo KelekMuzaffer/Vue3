@@ -4,7 +4,7 @@ import {createStore, Store, useStore as baseUseStore,} from 'vuex';
 
 /// define your typings for the store state
 export interface State {
-    city: Array<Object>
+    city: Array<{name: string,weather: number, temperature: number, updatedAt: Date}>
 }
 
 // define injection key
@@ -23,10 +23,11 @@ export const store = createStore<State>({
             }
         },
         loadCities(state, payload) {
+            state.city = [];
             for (const {name, weather: [{description: weather}], main: {temp: temperature}, dt: updatedAt} of payload) {
                 state.city.push({name, weather, temperature, updatedAt: new Date(updatedAt * 1000)});
             }
-        },
+        }
     },
     actions: {
         weather({commit, state}) {
@@ -34,7 +35,11 @@ export const store = createStore<State>({
                     .then((resp) => commit('loadCities', resp.data.list))
         }
     },
-    modules: {}
+    getters: {
+    cityGet: state => (name: any) => {
+            return state.city.filter(city => city.name.toLowerCase().startsWith(name.toLowerCase()))
+    }
+}
 })
 
 // define your own `useStore` composition function
